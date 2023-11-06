@@ -3,7 +3,7 @@ from datetime import datetime
 import ffmpeg
 import os
 
-def taglia_video(inputfile, filepath):
+def taglia_video():
     start_time = input("Inserisci il tempo d'inizio nel formato HH:MM:SS: ")
     if start_time == "":
         start_time = "00:00:00"
@@ -24,7 +24,7 @@ def taglia_video(inputfile, filepath):
     ffmpeg.run(stream, quiet=True)
 
 
-def raffica_foto(inputfile, filepath):
+def raffica_foto():
     start_time = input("Inserisci il tempo d'inizio nel formato HH:MM:SS: ")
     if start_time == "":
         start_time = "00:00:00"
@@ -53,33 +53,33 @@ def raffica_foto(inputfile, filepath):
         out_filename = os.path.basename(filepath).split('/')[-1].replace(" ", "_")+"_"
     stream = ffmpeg.input(inputfile, ss=start_time, t=tempo_secondi)
     stream = ffmpeg.filter(stream, "fps", fps=foto_fps)
-    stream = ffmpeg.output(stream, filepath+"/"+out_filedir+"/"+out_filename+"%04d.png")
+    stream = ffmpeg.output(stream, filepath+"/"+out_filedir+"/"+out_filename+"%04d.png", vcodec='copy', acodec='copy')
     print("\nSto esportando...\n")
     ffmpeg.run(stream, quiet=True)
 
 
-def transcodifica(inputfile, filepath):
+def transcodifica():
     out_filename = input("Inserisci il nome del file output (lascia vuoto per il default): ")
     if out_filename == "":
         out_filename = "out_"+os.path.basename(inputfile).split('/')[-1]
     stream = ffmpeg.input(inputfile)
-    stream = ffmpeg.output(stream, filepath+"/"+out_filename, vcodec="libx264")
+    stream = ffmpeg.output(stream, filepath+"/"+out_filename, vcodec="libx264", acodec='copy')
     print("\nSto esportando...\n")
     ffmpeg.run(stream, quiet=True)
 
 
 def chiedi_modalita():
-    modalita = input("Premi:\n- [F] per creare una raffica di foto,\n- [C] per tagliare un video,\n- [T] per fare transcodifica in h264,\n- [Q] per uscire.\n\nCosa devi fare? :").lower()
-
+    modalita = input("Press:\n- [F] to extract multiple photo from a video,\n- [C] to make a simple start-end cut,\n- [T] to change video codec to h264,\n- [Q] to exit.\n\nWhat is your choice? :").lower()
+    print()
     match modalita:
         case "f":
-            raffica_foto(inputfile, filepath)
+            raffica_foto()
             exit()
         case "c":
-            taglia_video(inputfile, filepath)
+            taglia_video()
             exit()
         case "t":
-            transcodifica(inputfile, filepath)
+            transcodifica()
             exit()
         case "q":
             exit()
