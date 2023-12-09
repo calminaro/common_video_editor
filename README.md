@@ -1,24 +1,38 @@
-# Calminaro Common Video Editor
+# Calminaro Simple Video Editor
 
 Semplice programma per automatizzare task ricorrenti.
 
-Richiede ffmpeg installato nel sistema.
 
-Su Debian based: `sudo apt install ffmpeg`
+
+# Installazione
+
+`git clone https://github.com/calminaro/common_video_editor`
+
+Richiede [ffmpeg](https://ffmpeg.org/) installato nel sistema.
+
+Su Linux: `sudo apt install ffmpeg` o altro package manager
+
+Su Windows: `winget install ffmpeg`
+
+Installare le dipendenze: `pip install -r requirements.txt`
 
 ---
 
-# Opzioni disponibili
+# Funzioni disponibili
 
-`python3 calminaro_editor.py`
+`python3 simple_editor.py`
 
 ```textile
-Simple Calminaro Video Editor
+Simple Video Editor
 
-Press:
+[?] File Path?: /path/to/file/input.mp4
+[?] What do you want to do?: change video codec to h264
+   extract multiple photo from a video
+   make a simple start-end cut
+ > change video codec to h264
+   quit
 
-[F] to extract multiple photo from a video,
-[C] to make a simple start-end cut,
-[T] to change video codec to h264,
-[Q] to exit.
+[?] Inserisci il nome del file output: output.mp4
+
+Sto esportando...
 ```
