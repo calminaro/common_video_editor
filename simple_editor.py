@@ -1,4 +1,3 @@
-from tkinter import filedialog
 from datetime import datetime
 import inquirer
 import ffmpeg
@@ -17,7 +16,7 @@ def taglia_video():
     stream = ffmpeg.output(stream, f"{os.path.dirname(os.path.abspath(filepath))}/{out_filename}", vcodec="copy", acodec="copy")
     print("\nSto esportando...\n")
     ffmpeg.run(stream, quiet=True)
-
+exit
 
 def raffica_foto():
     start_time = inquirer.text(message="Inserisci il tempo d'inizio nel formato HH:MM:SS", default="00:00:00")
@@ -43,40 +42,44 @@ def raffica_foto():
     ffmpeg.run(stream, quiet=True)
 
 
-def transcodifica():
+def transcodifica264():
     out_filename = inquirer.text(message="Inserisci il nome del file output", default=f"out_{os.path.basename(filepath).split('/')[-1]}")
     stream = ffmpeg.input(filepath)
     stream = ffmpeg.output(stream, f"{os.path.dirname(os.path.abspath(filepath))}/{out_filename}", vcodec="libx264", acodec="copy")
     print("\nSto esportando...\n")
     ffmpeg.run(stream, quiet=True)
 
+def transcodifica265():
+    out_filename = inquirer.text(message="Inserisci il nome del file output", default=f"out_{os.path.basename(filepath).split('/')[-1]}")
+    stream = ffmpeg.input(filepath)
+    stream = ffmpeg.output(stream, f"{os.path.dirname(os.path.abspath(filepath))}/{out_filename}", vcodec="libx265", acodec="copy")
+    print("\nSto esportando...\n")
+    ffmpeg.run(stream, quiet=True)
 
-def chiedi_modalita():
-    modalita = answers["mode"]
-
-    match modalita:
-        case "extract multiple photo from a video":
-            raffica_foto()
-            exit()
-        case "make a simple start-end cut":
-            taglia_video()
-            exit()
-        case "change video codec to h264":
-            transcodifica()
-            exit()
-        case "quit":
-            exit()
-        case _:
-            chiedi_modalita()
+def decomprimi():
+    out_filename = inquirer.text(message="Inserisci il nome del file output", default=f"out_{os.path.basename(filepath).split('/')[-1]}.mov")
+    stream = ffmpeg.input(filepath)
+    stream = ffmpeg.output(stream, f"{os.path.dirname(os.path.abspath(filepath))}/{out_filename}", vcodec="mjpeg", acodec="pcm_s16le")
+    print("\nSto esportando...\n")
+    ffmpeg.run(stream, quiet=True)
 
 if __name__ == "__main__":
     print("\nSimple Video Editor\n")
 
+    modalita = {
+        "extract multiple photo from a video": raffica_foto,
+        "make a simple start-end cut": taglia_video,
+        "transcode to h264": transcodifica264,
+        "transcode to h265": transcodifica265,
+        #"decompress to mjpeg - pcm_s16le": decomprimi,
+        "quit": exit
+        }
+
     questions = [
         inquirer.Path("file_path", message="File Path?", normalize_to_absolute_path=True, exists=True, path_type=inquirer.Path.FILE),
-        inquirer.List("mode", message="What do you want to do?", choices=["extract multiple photo from a video", "make a simple start-end cut", "change video codec to h264", "quit"], default="quit"),
+        inquirer.List("mode", message="What do you want to do?", choices=list(modalita.keys()), default="quit"),
     ]
     answers = inquirer.prompt(questions)
     filepath = answers["file_path"]
 
-    chiedi_modalita()
+    modalita[answers["mode"]]()
