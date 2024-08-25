@@ -77,5 +77,6 @@ if __name__ == "__main__":
         }
     
     filepath = askopenfilename(title="Scegli il video", initialdir=config["base_filepath"])
-
-    modalita[inquirer.List("mode", message="Cosa vuoi fare?", choices=list(modalita.keys()), default="Esci")]()
+    questions = [inquirer.List("modalita", message="Cosa vuoi fare?", choices=list(modalita.keys()), default="Esci"),]
+    answers = inquirer.prompt(questions)
+    modalita[answers["modalita"]]()
