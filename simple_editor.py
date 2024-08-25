@@ -2,6 +2,7 @@ from tkinter.filedialog import askopenfilename
 from datetime import datetime
 import inquirer
 import ffmpeg
+import json
 import os
 
 def taglia_video():
@@ -63,19 +64,18 @@ def decomprimi():
 if __name__ == "__main__":
     print("\nSimple Video Editor\n")
 
+    with open("config.json", "r") as f:
+        config = json.load(f)
+
     modalita = {
-        "extract multiple photo from a video": raffica_foto,
-        "make a simple start-end cut": taglia_video,
-        "transcode to h264": transcodifica264,
-        "transcode to h265": transcodifica265,
+        "Estrai multiple foto dai video": raffica_foto,
+        "Fai un taglio inizio-fine": taglia_video,
+        "Transcodifica in h264": transcodifica264,
+        "Transcodifica in h265": transcodifica265,
         #"decompress to mjpeg - pcm_s16le": decomprimi,
-        "quit": exit
+        "Esci": exit
         }
+    
+    filepath = askopenfilename(title="Scegli il video", initialdir=config["base_filepath"])
 
-    questions = [
-        inquirer.List("mode", message="What do you want to do?", choices=list(modalita.keys()), default="quit"),
-    ]
-    answers = inquirer.prompt(questions)
-    filepath = askopenfilename(title="Scegli il video", initialdir="/mnt/d/montaggio")
-
-    modalita[answers["mode"]]()
+    modalita[inquirer.List("mode", message="Cosa vuoi fare?", choices=list(modalita.keys()), default="Esci")]()
