@@ -1,3 +1,4 @@
+from tkinter.filedialog import askopenfilename
 from datetime import datetime
 import inquirer
 import ffmpeg
@@ -27,7 +28,7 @@ def raffica_foto():
     tempo_secondi = int(delta.total_seconds())
     foto_fps = inquirer.text(message="Numero di foto al secondo", default="2")
     foto_fps = int(foto_fps)
-    out_filedir = inquirer.text(message="Inserisci il nome della cartella di output", default="foto")
+    out_filedir = inquirer.text(message="Inserisci il nome della cartella di output", default=f"{os.path.dirname(os.path.abspath(filepath)).split('/')[-1]} - foto")
     if not os.path.exists(f"{os.path.dirname(os.path.abspath(filepath))}/{out_filedir}"):
         os.makedirs(f"{os.path.dirname(os.path.abspath(filepath))}/{out_filedir}")
     out_filename = inquirer.text(message="Inserisci il nome del file output", default=f"{os.path.dirname(os.path.abspath(filepath)).split('/')[-1].replace(' ', '_')}_")
@@ -72,10 +73,9 @@ if __name__ == "__main__":
         }
 
     questions = [
-        inquirer.Path("file_path", message="File Path?", normalize_to_absolute_path=True, exists=True, path_type=inquirer.Path.FILE),
         inquirer.List("mode", message="What do you want to do?", choices=list(modalita.keys()), default="quit"),
     ]
     answers = inquirer.prompt(questions)
-    filepath = answers["file_path"]
+    filepath = askopenfilename(title="Scegli il video", initialdir="/mnt/d/montaggio")
 
     modalita[answers["mode"]]()
